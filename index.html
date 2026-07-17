@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Animal Fire Help — Find and offer support for animals affected by wildfire</title>
+<style>
+  /* ---- Type ---- */
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Inter:wght@400;500;600&display=swap');
+
+  :root {
+    --ground:   #F3EEE4;  /* warm paper */
+    --ink:      #23201A;  /* near-black brown, body text */
+    --stone:    #6B6559;  /* muted secondary text */
+    --line:     #DAD2C2;  /* hairlines / borders */
+    --card:     #FBF8F1;  /* card surface */
+    --moss:     #3C5A3E;  /* grounded green, primary action */
+    --moss-ink: #FFFFFF;
+    --ember:    #B5502B;  /* warm clay accent, used sparingly */
+    --focus:    #1B4D8F;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.5;
+  }
+
+  a { color: var(--focus); }
+
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 20px; }
+
+  /* ---- Header ---- */
+  header {
+    border-bottom: 2px solid var(--ink);
+    padding: 28px 0 22px;
+  }
+  .eyebrow {
+    font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ember); font-weight: 600; margin: 0 0 8px;
+  }
+  h1 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 900;
+    font-size: clamp(30px, 6vw, 46px);
+    line-height: 1.02;
+    margin: 0 0 12px;
+    letter-spacing: -0.01em;
+  }
+  .lede { font-size: 17px; color: var(--stone); margin: 0; max-width: 60ch; }
+
+  /* ---- Action bar (request / offer) ---- */
+  .actions {
+    display: flex; flex-wrap: wrap; gap: 12px;
+    margin: 22px 0 0;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'Inter', sans-serif; font-weight: 600; font-size: 16px;
+    padding: 14px 20px; border-radius: 10px;
+    text-decoration: none; border: 2px solid var(--ink);
+    min-height: 52px; cursor: pointer;
+  }
+  .btn-request { background: var(--moss); color: var(--moss-ink); border-color: var(--moss); }
+  .btn-offer   { background: var(--card); color: var(--ink); }
+  .btn:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+  /* ---- Search controls ---- */
+  .finder { padding: 28px 0 8px; }
+  .finder h2 {
+    font-family: 'Fraunces', serif; font-weight: 600;
+    font-size: 22px; margin: 0 0 16px;
+  }
+  .controls { display: grid; gap: 12px; grid-template-columns: 1fr; }
+  @media (min-width: 620px) {
+    .controls { grid-template-columns: 1fr 1fr; }
+    .search-field { grid-column: 1 / -1; }
+  }
+  label.field-label {
+    display: block; font-size: 13px; font-weight: 600;
+    color: var(--stone); margin: 0 0 5px; letter-spacing: 0.02em;
+  }
+  input[type="text"], select {
+    width: 100%; font-family: 'Inter', sans-serif; font-size: 16px;
+    padding: 13px 14px; border: 1.5px solid var(--line); border-radius: 9px;
+    background: var(--card); color: var(--ink); min-height: 50px;
+  }
+  input[type="text"]:focus, select:focus {
+    outline: 3px solid var(--focus); outline-offset: 1px; border-color: var(--focus);
+  }
+
+  /* ---- Need / offer toggle ---- */
+  .segmented {
+    display: inline-flex; gap: 0; margin: 0 0 18px;
+    border: 1.5px solid var(--ink); border-radius: 10px; overflow: hidden;
+    max-width: 100%; flex-wrap: wrap;
+  }
+  .seg {
+    font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600;
+    padding: 11px 18px; min-height: 46px; border: none; cursor: pointer;
+    background: var(--card); color: var(--ink);
+    border-right: 1.5px solid var(--ink);
+  }
+  .seg:last-child { border-right: none; }
+  .seg.active { background: var(--ink); color: var(--ground); }
+  .seg:focus-visible { outline: 3px solid var(--focus); outline-offset: -3px; }
+
+  .count { font-size: 14px; color: var(--stone); margin: 18px 0 4px; }
+
+  /* ---- Result cards ---- */
+  .results { padding: 4px 0 40px; display: grid; gap: 14px; }
+  .card {
+    background: var(--card); border: 1.5px solid var(--line);
+    border-radius: 12px; padding: 18px 18px 16px;
+  }
+  .card-top { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: baseline; justify-content: space-between; }
+  .card h3 {
+    font-family: 'Fraunces', serif; font-weight: 600; font-size: 20px;
+    margin: 0; line-height: 1.15; flex: 1 1 auto;
+  }
+  .tag {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.03em;
+    padding: 4px 10px; border-radius: 20px;
+    background: var(--moss); color: #fff; white-space: nowrap;
+  }
+  .kind-badge {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.04em;
+    text-transform: uppercase; padding: 3px 9px; border-radius: 20px;
+    white-space: nowrap; border: 1.5px solid var(--ember); color: var(--ember);
+    background: transparent;
+  }
+  .region {
+    font-size: 13px; color: var(--ember); font-weight: 600;
+    margin: 8px 0 6px; letter-spacing: 0.02em;
+  }
+  .card p.desc { margin: 6px 0 12px; font-size: 15.5px; }
+  .meta { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; color: var(--stone); }
+  .meta a { font-weight: 600; }
+  .meta .hours::before { content: "🕑 "; }
+
+  .empty {
+    background: var(--card); border: 1.5px dashed var(--line);
+    border-radius: 12px; padding: 26px 20px; text-align: center; color: var(--stone);
+  }
+  .empty strong { color: var(--ink); }
+
+  /* ---- Notice / footer ---- */
+  .notice {
+    background: #FCEFE8; border: 1.5px solid #E6C3B2;
+    border-radius: 10px; padding: 14px 16px; font-size: 14.5px;
+    margin: 8px 0 32px; color: #5A3322;
+  }
+  footer {
+    border-top: 1.5px solid var(--line); padding: 22px 0 40px;
+    font-size: 14px; color: var(--stone);
+  }
+  footer a { font-weight: 600; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .card { transition: border-color .15s ease; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <p class="eyebrow">Ontario · Animal Wildfire Support</p>
+    <h1>Find support for your animals if you have been affected by wildfire</h1>
+    <p class="lede">Search local resources for pet food, supplies, temporary fostering, transport, and care. If you need help now, browse the resources below. If you have help to give, let us know.</p>
+    <div class="actions">
+      <a class="btn btn-request" id="requestBtn" href="#resources-search">Find help below</a>
+      <a class="btn btn-offer" id="offerBtn" href="#">I can offer help</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="finder wrap" id="resources-search">
+    <h2>Search resources</h2>
+    <div class="segmented" role="group" aria-label="Filter by need or offer">
+      <button type="button" class="seg active" data-kind="">All</button>
+      <button type="button" class="seg" data-kind="need">I need help</button>
+      <button type="button" class="seg" data-kind="offer">I'm offering help</button>
+    </div>
+    <div class="controls">
+      <div class="search-field">
+        <label class="field-label" for="q">Search by keyword</label>
+        <input type="text" id="q" placeholder="e.g. cat food, hay, foster, trailer" autocomplete="off">
+      </div>
+      <div>
+        <label class="field-label" for="region">Location</label>
+        <select id="region"><option value="">All locations</option></select>
+      </div>
+      <div>
+        <label class="field-label" for="category">Type of help</label>
+        <select id="category"><option value="">All types</option></select>
+      </div>
+    </div>
+    <p class="count" id="count" aria-live="polite"></p>
+  </section>
+
+  <section class="results wrap" id="results"></section>
+
+  <div class="wrap">
+    <p class="notice"><strong>Please note:</strong> This page connects people with local resources. It does not vet, supervise, or guarantee any listing, and it is not staffed around the clock. If an animal is in immediate danger, contact your local emergency services or veterinarian directly.</p>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p style="margin:0 0 14px;">Maintained by the <strong>Centre for Animal-Aligned AI</strong> · <a href="https://animalalignedai.org" target="_blank" rel="noopener">animalalignedai.org</a>. To list a resource or report a change, email <a href="mailto:info@animalalignedai.org">info@animalalignedai.org</a>.</p>
+    <p style="margin:0 0 6px; font-weight:600; font-size:13px; letter-spacing:0.02em;">⚡ Transparency: energy used to build this page</p>
+    <p style="margin:0; font-size:13px; color:var(--stone); max-width:70ch;">This page was developed through a conversation with Claude (a large language model), covering design, build, and adding resources. Based on published estimates of roughly 0.34–1 Wh per query for frontier-scale models, the total energy used to build it is estimated at about <strong>5–20 Wh</strong> — comparable to running an LED bulb for 30 minutes to 2 hours. Once live, the page itself is a static site and uses a negligible amount of energy to load. We share this in the spirit of the transparency we advocate for: AI tools have a real if modest per-session footprint, and the goal is more intentional choices, not avoiding AI entirely. Figures are estimates and vary by model, hardware, and query length.</p>
+  </div>
+</footer>
+
+<script src="resources.js"></script>
+<script>
+  // ---- CONFIG ----
+  // Where "I can offer help" emails go. Change this to your coordinator inbox if needed.
+  const OFFER_EMAIL = "info@animalalignedai.org";
+
+  // Build a pre-filled email so offers arrive with the basics already prompted.
+  const offerSubject = "Offer of help — animals affected by wildfire";
+  const offerBody =
+    "I'd like to offer help. Here are my details:\n\n" +
+    "Name:\n" +
+    "Location (town/county):\n" +
+    "Phone:\n\n" +
+    "What I can offer (e.g. foster space, transport/trailer, supplies, feed, volunteer time):\n\n" +
+    "Which animals I can help with (cats, dogs, small animals, horses/large animals, farmed animals):\n\n" +
+    "How much / capacity (e.g. space for 4 dogs, trailer for 2 horses):\n\n" +
+    "How far I can travel or deliver:\n\n" +
+    "Best time / way to reach me:\n\n" +
+    "Anything else:\n";
+  const offerBtn = document.getElementById('offerBtn');
+  offerBtn.href = "mailto:" + OFFER_EMAIL +
+    "?subject=" + encodeURIComponent(offerSubject) +
+    "&body=" + encodeURIComponent(offerBody);
+
+  // "Find help below" smooth-scrolls to the search section.
+  const requestBtn = document.getElementById('requestBtn');
+  requestBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('resources-search').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  // ---- Build filter dropdowns from the data ----
+  const regionSel = document.getElementById('region');
+  const catSel = document.getElementById('category');
+  const regions = [...new Set(RESOURCES.map(r => r.region))].sort();
+  const cats = [...new Set(RESOURCES.map(r => r.category))].sort();
+  regions.forEach(r => regionSel.add(new Option(r, r)));
+  cats.forEach(c => catSel.add(new Option(c, c)));
+
+  // ---- Need / offer toggle ----
+  let activeKind = "";
+  const segButtons = document.querySelectorAll('.seg');
+  segButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      segButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeKind = btn.dataset.kind;
+      render();
+    });
+  });
+
+  // ---- Render ----
+  const results = document.getElementById('results');
+  const count = document.getElementById('count');
+  const q = document.getElementById('q');
+
+  function esc(s){ return (s||'').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+  function contactLink(c){
+    if(!c) return '';
+    if(c.includes('@')) return `<a href="mailto:${esc(c)}">${esc(c)}</a>`;
+    const tel = c.replace(/[^0-9+]/g,'');
+    if(tel.length >= 7) return `<a href="tel:${tel}">${esc(c)}</a>`;
+    return esc(c);
+  }
+
+  function render(){
+    const term = q.value.trim().toLowerCase();
+    const reg = regionSel.value;
+    const cat = catSel.value;
+
+    const matches = RESOURCES.filter(r => {
+      const okReg = !reg || r.region === reg || r.region === 'Ontario-wide';
+      const okCat = !cat || r.category === cat;
+      const okKind = !activeKind || (r.kind || 'need') === activeKind;
+      const hay = (r.name + ' ' + r.description + ' ' + r.category + ' ' + r.region).toLowerCase();
+      const okTerm = !term || hay.includes(term);
+      return okReg && okCat && okKind && okTerm;
+    });
+
+    count.textContent = matches.length === 1
+      ? '1 resource found'
+      : matches.length + ' resources found';
+
+    if(matches.length === 0){
+      results.innerHTML = `<div class="empty"><strong>No resources match that search.</strong><br>
+        Try clearing a filter or searching a nearby area. For help finding something that isn't listed, email <a href="mailto:info@animalalignedai.org">info@animalalignedai.org</a>.</div>`;
+      return;
+    }
+
+    results.innerHTML = matches.map(r => `
+      <article class="card">
+        <div class="card-top">
+          <h3>${esc(r.name)}</h3>
+          <span class="tag">${esc(r.category)}</span>
+        </div>
+        ${r.kind === 'offer' ? '<span class="kind-badge">Offering help</span>' : ''}
+        <div class="region">${esc(r.region)}</div>
+        <p class="desc">${esc(r.description)}</p>
+        <div class="meta">
+          ${r.contact ? `<span>${contactLink(r.contact)}</span>` : ''}
+          ${r.link ? `<span><a href="${esc(r.link)}" target="_blank" rel="noopener">Website</a></span>` : ''}
+          ${r.hours ? `<span class="hours">${esc(r.hours)}</span>` : ''}
+        </div>
+      </article>
+    `).join('');
+  }
+
+  q.addEventListener('input', render);
+  regionSel.addEventListener('change', render);
+  catSel.addEventListener('change', render);
+  render();
+</script>
+</body>
+</html>
